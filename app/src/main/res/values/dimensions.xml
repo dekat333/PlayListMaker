@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout_marginStart">16dp</dimen>
+    <dimen name="layout_marginTop">16dp</dimen>
+    <dimen name="layout_marginBottom">16dp</dimen>
+    <dimen name="layout_height">0dp</dimen>
+    <dimen name="layout_marginEnd">16dp</dimen>
+    <dimen name="cornerRadius">16dp</dimen>
+    <dimen name="iconPadding">8dp</dimen>
+    <dimen name="layout_marginStartSetting">64dp</dimen>
+    <dimen name="layout_marginTopSetting">12dp</dimen>
+    <dimen name="layout_marginTopTextSetting">21dp</dimen>
+    <dimen name="layout_marginBottomTextSetting">21dp</dimen>
+    <dimen name="layout_marginTopText">24dp</dimen>
+    <dimen name="layout_marginTopText1">19dp</dimen>
+    <dimen name="layout_marginStartTextSetting">340dp</dimen>
+    <dimen name="layout_marginStartTextSetting1">324dp</dimen>
+</resources>
