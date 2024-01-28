@@ -1,19 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/some_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    android:background="?attr/colorOnPrimary"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="@string/search"
-        android:textAppearance="@style/title"
-        android:textColor="@color/black"
-        tools:ignore="MissingConstraints" />
+    <FrameLayout
+        android:id="@+id/panel_header2"
+        style="@style/FrameLayout">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_16"
+            android:layout_marginEnd="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_16"
+            android:backgroundTint="?attr/colorOnPrimary"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/setting"
+            style="@style/TextViewStyle"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="@dimen/dp_16"
+            android:text="@string/search"
+            android:textAppearance="@style/title"
+            android:textColor="?attr/colorOnSecondary" />
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/panel_header3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/search_line"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_marginEnd="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_8"
+            android:background="@drawable/edittext"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/dp_10"
+            style="@style/dark"
+            android:hint="@string/search"
+            android:textColor="@color/black"
+            android:textColorHint="?attr/colorPrimaryVariant"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:inputType="text"
+            android:maxLines="1"
+            />
+
+        <ImageButton
+            android:visibility="gone"
+            android:id="@+id/clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dp_18"
+            android:layout_marginEnd="@dimen/dp_28"
+            android:layout_marginBottom="@dimen/dp_18"
+            android:background="?attr/colorOnPrimaryContainer"
+            android:src="@drawable/clear"/>
+
+
+    </FrameLayout>
+</LinearLayout>
