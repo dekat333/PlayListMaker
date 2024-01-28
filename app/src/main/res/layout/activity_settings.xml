@@ -4,46 +4,59 @@
     android:id="@+id/some_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnPrimary"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/panel_header1"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/icon"
-            android:backgroundTint="?attr/colorOnPrimary"
+            android:backgroundTint="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_16"
             android:layout_marginEnd="@dimen/dp_16"
             android:layout_marginBottom="@dimen/dp_16"
-            android:src ="@drawable/ic_back"/>
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="80dp"
             android:layout_marginTop="22dp"
             android:layout_marginBottom="@dimen/dp_16"
-            android:text="@string/setting"
+            android:gravity="top"
+            android:text="@string/setting1"
+            android:textAllCaps="false"
             android:textAppearance="@style/title"
-            android:textColor="?attr/colorOnSecondary"
-            style="@style/TextViewStyle"/>
+            android:textColor="@color/black" />
 
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/dark_theme"
-        style="@style/FrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp">
 
         <TextView
             android:id="@+id/dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_21"
+            android:layout_marginBottom="@dimen/dp_21"
+            android:gravity="top"
             android:text="@string/dark"
-            style="@style/TextViewSettingStyle"/>
+            android:textAllCaps="false"
+            android:textAppearance="@style/dark"
+            android:textColor="@color/black" />
 
         <Switch
             android:id="@+id/switch1"
@@ -53,54 +66,91 @@
             android:layout_marginEnd="@dimen/dp_24"
             android:layout_marginTop="@dimen/dp_21"
             android:layout_marginBottom="@dimen/dp_21"
-            android:thumbTint="?attr/colorSecondary"
-            android:trackTint="?attr/colorSecondaryVariant"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/share"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/sharetext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_21"
+            android:layout_marginBottom="@dimen/dp_21"
+            android:gravity="top"
             android:text="@string/share"
-            style="@style/TextViewSettingStyle"/>
+            android:textAllCaps="false"
+            android:textAppearance="@style/dark"
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/icon_share"
-            android:src="@drawable/ic_share"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_19"
+            android:src="@drawable/ic_share" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/help"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/supporttext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_21"
+            android:layout_marginBottom="@dimen/dp_21"
+            android:gravity="top"
             android:text="@string/help"
-            style="@style/TextViewSettingStyle"/>
+            android:textAllCaps="false"
+            android:textAppearance="@style/dark"
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/icon_support"
-            android:src="@drawable/ic_support"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_19"
+            android:src="@drawable/ic_support" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/user_doc"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/usertext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_21"
+            android:layout_marginBottom="@dimen/dp_21"
+            android:gravity="top"
             android:text="@string/user"
-            style="@style/TextViewSettingStyle"/>
+            android:textAllCaps="false"
+            android:textAppearance="@style/dark"
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/icon_user"
-            android:src="@drawable/ic_user"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_19"
+            android:src="@drawable/ic_user" />
     </FrameLayout>
 
 </LinearLayout>
