@@ -10,7 +10,8 @@
 
     <FrameLayout
         android:id="@+id/panel_header2"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/icon1"
@@ -26,8 +27,11 @@
         <TextView
             android:id="@+id/setting"
             style="@style/TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_marginStart="80dp"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="@dimen/dp_22"
             android:layout_marginBottom="@dimen/dp_16"
             android:text="@string/search"
             android:textAppearance="@style/title"

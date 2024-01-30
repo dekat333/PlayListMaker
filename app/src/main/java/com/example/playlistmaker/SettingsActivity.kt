@@ -17,16 +17,16 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
 
-        val button_back = findViewById<ImageButton>(R.id.icon)
+        val buttonBack = findViewById<ImageButton>(R.id.icon)
 
-        button_back.setOnClickListener {
+        buttonBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
-        val button_share = findViewById<FrameLayout>(R.id.share)
+        val buttonShare = findViewById<FrameLayout>(R.id.share)
 
-        button_share.setOnClickListener {
+        buttonShare.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO)
             shareIntent.data = Uri.parse("mailto:")
             shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.mail)))
@@ -34,9 +34,9 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val button_support = findViewById<FrameLayout>(R.id.help)
+        val buttonSupport = findViewById<FrameLayout>(R.id.help)
 
-        button_support.setOnClickListener {
+        buttonSupport.setOnClickListener {
             val supportIntent = Intent(Intent.ACTION_SENDTO)
             supportIntent.data = Uri.parse("mailto:")
             supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.mail)))
@@ -45,9 +45,9 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(supportIntent)
         }
 
-        val button_user = findViewById<FrameLayout>(R.id.user_doc)
+        val buttonUser = findViewById<FrameLayout>(R.id.user_doc)
 
-        button_user.setOnClickListener {
+        buttonUser.setOnClickListener {
             val userIntent = Intent(Intent.ACTION_VIEW)
             userIntent.data = Uri.parse(getString(R.string.offer))
             startActivity(userIntent)
