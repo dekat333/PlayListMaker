@@ -11,21 +11,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
-    var input = ""
-    lateinit var searchline: EditText
+    private var input = ""
+    private lateinit var searchline: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         searchline = findViewById<EditText>(R.id.search_line)
-        val clear_button = findViewById<ImageButton>(R.id.clear_button)
-        val button_back = findViewById<ImageButton>(R.id.icon1)
+        val clearButton = findViewById<ImageButton>(R.id.clear_button)
+        val buttonBack = findViewById<ImageButton>(R.id.icon1)
 
 
-        button_back.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+        buttonBack.setOnClickListener {
+            finish()
+
         }
 
 
@@ -35,17 +36,14 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    clear_button.visibility = View.GONE
-                }else{
-                    input = searchline.text.toString()
-                    searchline.requestFocus()
-                    clear_button.visibility = View.VISIBLE
-                    clear_button.setOnClickListener {
-                        searchline.setText("")
-                        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                        inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
-                    }
+                clearButton.isVisible = !s.isNullOrEmpty()
+                input = searchline.text.toString()
+                searchline.requestFocus()
+                clearButton.setOnClickListener {
+                    searchline.setText("")
+                    val inputMethodManager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
                 }
             }
 
@@ -56,15 +54,20 @@ class SearchActivity : AppCompatActivity() {
 
         }
 
-        //добавляем созданный simpleTextWatcher к EditText
         searchline.addTextChangedListener(searchTextWatcher)
 
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("Value Edit Text", input)
+        outState.putString(KEY, input)
 
     }
+
+    companion object{
+        const val KEY = "Value Edit Text"
+    }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         // Вторым параметром мы передаём значение по умолчанию

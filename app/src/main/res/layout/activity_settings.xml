@@ -9,7 +9,8 @@
 
     <FrameLayout
         android:id="@+id/panel_header1"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/icon"
@@ -25,11 +26,14 @@
         <TextView
             android:id="@+id/setting"
             android:layout_marginStart="80dp"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="@dimen/dp_22"
             android:layout_marginBottom="@dimen/dp_16"
             android:text="@string/setting"
             android:textAppearance="@style/title"
             android:textColor="?attr/colorOnSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             style="@style/TextViewStyle"/>
 
 
@@ -37,12 +41,19 @@
 
     <FrameLayout
         android:id="@+id/dark_theme"
-        style="@style/FrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp">
 
         <TextView
             android:id="@+id/dark"
             android:text="@string/dark"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_22"
+            android:layout_marginBottom="@dimen/dp_22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             style="@style/TextViewSettingStyle"/>
 
         <Switch
@@ -51,8 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="@dimen/dp_24"
-            android:layout_marginTop="@dimen/dp_21"
-            android:layout_marginBottom="@dimen/dp_21"
+            android:layout_marginTop="@dimen/dp_22"
+            android:layout_marginBottom="@dimen/dp_22"
             android:thumbTint="?attr/colorSecondary"
             android:trackTint="?attr/colorSecondaryVariant"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
@@ -60,47 +71,80 @@
 
     <FrameLayout
         android:id="@+id/share"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/sharetext"
             android:text="@string/share"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_22"
+            android:layout_marginBottom="@dimen/dp_22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             style="@style/TextViewSettingStyle"/>
 
         <ImageView
             android:id="@+id/icon_share"
             android:src="@drawable/ic_share"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_24" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/help"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/supporttext"
             android:text="@string/help"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_22"
+            android:layout_marginBottom="@dimen/dp_22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             style="@style/TextViewSettingStyle"/>
 
         <ImageView
             android:id="@+id/icon_support"
             android:src="@drawable/ic_support"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_24" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/user_doc"
-        style="@style/FrameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/usertext"
             android:text="@string/user"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_22"
+            android:layout_marginBottom="@dimen/dp_22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
             style="@style/TextViewSettingStyle"/>
 
         <ImageView
             android:id="@+id/icon_user"
             android:src="@drawable/ic_user"
-            style="@style/ImageViewSettingStyle"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_24" />
     </FrameLayout>
 
 </LinearLayout>
