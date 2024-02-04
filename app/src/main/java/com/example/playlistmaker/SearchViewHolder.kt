@@ -16,7 +16,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val authorTrack: TextView
     private val timeTrack: TextView
     private val point: ImageView
-    private val trackItem: ConstraintLayout
+    private val trackItem: LinearLayout
     private val view: View
 
     init {

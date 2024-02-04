@@ -20,8 +20,7 @@ class SettingsActivity : AppCompatActivity() {
         val buttonBack = findViewById<ImageButton>(R.id.icon)
 
         buttonBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
 
         val buttonShare = findViewById<FrameLayout>(R.id.share)
