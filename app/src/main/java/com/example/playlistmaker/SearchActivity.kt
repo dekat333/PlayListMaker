@@ -124,6 +124,7 @@ class SearchActivity : AppCompatActivity() {
                             clearButton.setOnClickListener {
                                 searchline.setText("")
                                 trackList.clear()
+                                recyclerView.adapter?.notifyDataSetChanged()
                                 val inputMethodManager =
                                     getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                                 inputMethodManager?.hideSoftInputFromWindow(
@@ -157,6 +158,8 @@ class SearchActivity : AppCompatActivity() {
                         TextNoInternet.isVisible = true
                         TextNoInternet2.isVisible = true
                         buttonReturn.isVisible = true
+                        ImageNothing.isVisible = false
+                        TextNothing.isVisible = false
                         clearButton.setOnClickListener {
                             searchline.setText("")
                             ImageNoInternet.isVisible = false
@@ -177,6 +180,8 @@ class SearchActivity : AppCompatActivity() {
                     TextNoInternet.isVisible = true
                     TextNoInternet2.isVisible = true
                     buttonReturn.isVisible = true
+                    ImageNothing.isVisible = false
+                    TextNothing.isVisible = false
                     clearButton.setOnClickListener {
                         searchline.setText("")
                         ImageNoInternet.isVisible = false
@@ -188,6 +193,8 @@ class SearchActivity : AppCompatActivity() {
                         inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
                     }
                 }
+
+
 
 
             })
@@ -211,6 +218,8 @@ class SearchActivity : AppCompatActivity() {
         searchline.setText(input);
     }
 
+
 }
+enum class Visible ()
 
 
