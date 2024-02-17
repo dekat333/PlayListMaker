@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -50,6 +51,11 @@ class SettingsActivity : AppCompatActivity() {
             val userIntent = Intent(Intent.ACTION_VIEW)
             userIntent.data = Uri.parse(getString(R.string.offer))
             startActivity(userIntent)
+        }
+
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.setOnCheckedChangeListener {switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
     }
 

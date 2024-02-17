@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 data class Track (
+    val trackId: Int,
     val number: Int, //Номер трека
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя

@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.SearchHistory.Companion.HISTORY_KEY
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,11 +40,52 @@ class SearchActivity : AppCompatActivity() {
         searchline = findViewById<EditText>(R.id.search_line)
         val clearButton = findViewById<ImageButton>(R.id.clear_button)
         val buttonBack = findViewById<ImageButton>(R.id.icon1)
-
-
+        val recyclerView = findViewById<RecyclerView>(R.id.searchList)
+        recyclerView.isVisible = false
         buttonBack.setOnClickListener {
+            //recyclerView.isVisible = false
             finish()
 
+        }
+
+        val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+
+
+        val textHistory = findViewById<TextView>(R.id.TextHistory)
+
+        val historyRecyclerView = findViewById<RecyclerView>(R.id.historyList)
+        val clearHistory = findViewById<Button>(R.id.clearHistory)
+
+
+
+
+        val searchHistory = SearchHistory(sharedPref)
+        val adapter = SearchAdapter(searchHistory.read())
+
+        historyRecyclerView.adapter = adapter
+
+        clearHistory.setOnClickListener{
+            searchHistory.clear()
+            adapter.notifyDataSetChanged()
+            historyRecyclerView.isVisible = false
+            textHistory.isVisible = false
+            clearHistory.isVisible = false
+            searchline.clearFocus()
+        }
+
+        val buttonReturn = findViewById<Button>(R.id.buttonReturn)
+
+
+        searchline.setOnFocusChangeListener { view, hasFocus ->
+            if(hasFocus && searchline.text.isEmpty() && sharedPref.getString(HISTORY_KEY, null) != null) {
+
+
+                historyRecyclerView.isVisible = true
+                textHistory.isVisible = true
+                clearHistory.isVisible = true
+                historyRecyclerView.adapter = SearchAdapter(searchHistory.read())
+            }
+            else historyRecyclerView.isVisible = false
         }
 
         searchline.setOnEditorActionListener { _, actionId, _ ->
@@ -63,6 +105,11 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 input = searchline.text.toString()
                 searchline.requestFocus()
+                //recyclerView.isVisible = false
+                historyRecyclerView.isVisible = false
+                textHistory.isVisible = false
+                clearHistory.isVisible = false
+
                 clearButton.setOnClickListener {
                     searchline.setText("")
                     val inputMethodManager =
@@ -80,13 +127,14 @@ class SearchActivity : AppCompatActivity() {
 
         searchline.addTextChangedListener(searchTextWatcher)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.searchList)
+
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = SearchAdapter(trackList)
 
-        val buttonReturn = findViewById<Button>(R.id.buttonReturn)
+        //val buttonReturn = findViewById<Button>(R.id.buttonReturn)
         buttonReturn.setOnClickListener {
             searchTrack()
+
         }
 
     }
@@ -100,6 +148,9 @@ class SearchActivity : AppCompatActivity() {
         val ImageNoInternet = findViewById<ImageView>(R.id.no_internet)
         val TextNoInternet = findViewById<TextView>(R.id.TextHolderNoInternet)
         val TextNoInternet2 = findViewById<TextView>(R.id.TextHolderNoInternet2)
+        val textHistory = findViewById<TextView>(R.id.TextHistory)
+        val historyRecyclerView = findViewById<RecyclerView>(R.id.historyList)
+        val clearHistory = findViewById<Button>(R.id.clearHistory)
         trackApiService.search(searchline.text.toString())
             .enqueue(object : Callback<TrackResponse> {
                 override fun onResponse(
@@ -112,12 +163,19 @@ class SearchActivity : AppCompatActivity() {
                     ImageNothing.isVisible = false
                     TextNothing.isVisible = false
                     buttonReturn.isVisible = false
+                    textHistory.isVisible = false
+                    clearHistory.isVisible = false
+                    historyRecyclerView.isVisible = false
+                    recyclerView.isVisible = false
                     if (response.isSuccessful) {
+                        //recyclerView.isVisible = true
                         Log.d("Search", response.body()?.results.toString())
                         trackList.clear()
                         val trackAnswer = response.body()?.results
 
                         if (trackAnswer?.isNotEmpty() == true) {
+                            Log.d("Search", recyclerView.isVisible.toString())
+                            recyclerView.isVisible = true
                             trackList.addAll(trackAnswer!!)
                             recyclerView.adapter?.notifyDataSetChanged()
                             clearButton.isVisible = true
@@ -160,6 +218,7 @@ class SearchActivity : AppCompatActivity() {
                         buttonReturn.isVisible = true
                         ImageNothing.isVisible = false
                         TextNothing.isVisible = false
+
                         clearButton.setOnClickListener {
                             searchline.setText("")
                             ImageNoInternet.isVisible = false
@@ -182,6 +241,9 @@ class SearchActivity : AppCompatActivity() {
                     buttonReturn.isVisible = true
                     ImageNothing.isVisible = false
                     TextNothing.isVisible = false
+                    textHistory.isVisible = false
+                    clearHistory.isVisible = false
+                    historyRecyclerView.isVisible = false
                     clearButton.setOnClickListener {
                         searchline.setText("")
                         ImageNoInternet.isVisible = false
@@ -220,6 +282,3 @@ class SearchActivity : AppCompatActivity() {
 
 
 }
-enum class Visible ()
-
-
