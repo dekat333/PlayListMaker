@@ -56,17 +56,14 @@
             android:layout_gravity="top"
             style="@style/TextViewSettingStyle"/>
 
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             android:layout_marginEnd="@dimen/dp_24"
-            android:layout_marginTop="@dimen/dp_22"
-            android:layout_marginBottom="@dimen/dp_22"
             android:thumbTint="?attr/colorSecondary"
             android:trackTint="?attr/colorSecondaryVariant"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            android:layout_gravity="end|center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <FrameLayout
