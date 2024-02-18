@@ -96,7 +96,10 @@
         android:textSize="@dimen/sp_19"
         android:visibility="gone" />
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_14"
@@ -113,25 +116,27 @@
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <Button
-            android:id="@+id/clearHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:layout_marginTop="@dimen/dp_24"
-            android:backgroundTint="?attr/colorOnSecondary"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="Очистить историю"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorSecondary"
-            android:textFontWeight="500"
-            android:textSize="@dimen/sp_14"
-            android:visibility="gone"
-            app:cornerRadius="54dp" />
-    </FrameLayout>
 
 
 
+    <Button
+        android:id="@+id/clearHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_14"
+        android:backgroundTint="?attr/colorOnSecondary"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="Очистить историю"
+        android:textAllCaps="false"
+        android:textColor="?attr/colorOnPrimary"
+        android:textFontWeight="500"
+        android:textSize="@dimen/sp_14"
+        android:visibility="gone"
+        app:cornerRadius="54dp" />
+
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
