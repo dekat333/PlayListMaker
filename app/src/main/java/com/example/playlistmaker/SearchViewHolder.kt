@@ -59,6 +59,24 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val intent = Intent(trackItem.context, AudioPlayer::class.java)
             intent.putExtra("Key", Gson().toJson(model))
             trackItem.context.startActivity(intent)
+    val sharedPreferences = itemView.context.getSharedPreferences(HISTORY_KEY,
+        AppCompatActivity.MODE_PRIVATE)
+    val searchHistory = SearchHistory(sharedPreferences)
+        fun bind(model: Track) {
+            trackName.text = model.trackName
+            authorTrack.text = model.artistName
+            timeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
+            Glide
+                .with(trackItem)
+                .load(model.artworkUrl100)
+                .placeholder(R.drawable.placeholder)
+                .transform(RoundedCorners(10))
+                .into(iconTrack)
+
+
+            trackItem.setOnClickListener{
+searchHistory.write(model)
+            }
         }
     }
 }
