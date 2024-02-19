@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.SearchHistory.Companion.HISTORY_KEY
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -33,23 +35,30 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         view = itemView
 
     }
-    val sharedPreferences = itemView.context.getSharedPreferences(HISTORY_KEY,
-        AppCompatActivity.MODE_PRIVATE)
+
+    val sharedPreferences = itemView.context.getSharedPreferences(
+        HISTORY_KEY,
+        AppCompatActivity.MODE_PRIVATE
+    )
     val searchHistory = SearchHistory(sharedPreferences)
-        fun bind(model: Track) {
-            trackName.text = model.trackName
-            authorTrack.text = model.artistName
-            timeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
-            Glide
-                .with(trackItem)
-                .load(model.artworkUrl100)
-                .placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(10))
-                .into(iconTrack)
+    fun bind(model: Track) {
+        trackName.text = model.trackName
+        authorTrack.text = model.artistName
+        timeTrack.text =
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
+        Glide
+            .with(trackItem)
+            .load(model.artworkUrl100)
+            .placeholder(R.drawable.placeholder)
+            .transform(RoundedCorners(10))
+            .into(iconTrack)
 
 
-            trackItem.setOnClickListener{
-searchHistory.write(model)
-            }
+        trackItem.setOnClickListener {
+            searchHistory.write(model)
+            val intent = Intent(trackItem.context, AudioPlayer::class.java)
+            intent.putExtra("Key", Gson().toJson(model))
+            trackItem.context.startActivity(intent)
         }
     }
+}

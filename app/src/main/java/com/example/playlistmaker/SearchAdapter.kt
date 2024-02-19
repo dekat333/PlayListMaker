@@ -1,8 +1,10 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 
 class SearchAdapter (
     private val track: List<Track>
@@ -15,6 +17,7 @@ class SearchAdapter (
 
         override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
             holder.bind(track[position])
+
         }
 
         override fun getItemCount(): Int {
