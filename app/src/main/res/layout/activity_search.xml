@@ -91,7 +91,7 @@
         android:layout_marginTop="@dimen/dp_14"
         android:fontFamily="@font/ys_display_medium"
         android:gravity="center"
-        android:text="Вы искали"
+        android:text="@string/we_search"
         android:textColor="?attr/colorOnSecondary"
         android:textSize="@dimen/sp_19"
         android:visibility="gone" />
@@ -127,7 +127,7 @@
         android:layout_marginTop="@dimen/dp_14"
         android:backgroundTint="?attr/colorOnSecondary"
         android:fontFamily="@font/ys_display_medium"
-        android:text="Очистить историю"
+        android:text="@string/clear_history"
         android:textAllCaps="false"
         android:textColor="?attr/colorOnPrimary"
         android:textFontWeight="500"

@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -8,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -36,11 +38,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     }
 
-    val sharedPreferences = itemView.context.getSharedPreferences(
-        HISTORY_KEY,
-        AppCompatActivity.MODE_PRIVATE
-    )
-    val searchHistory = SearchHistory(sharedPreferences)
+
     fun bind(model: Track) {
         trackName.text = model.trackName
         authorTrack.text = model.artistName
@@ -54,29 +52,5 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(iconTrack)
 
 
-        trackItem.setOnClickListener {
-            searchHistory.write(model)
-            val intent = Intent(trackItem.context, AudioPlayer::class.java)
-            intent.putExtra("Key", Gson().toJson(model))
-            trackItem.context.startActivity(intent)
-    val sharedPreferences = itemView.context.getSharedPreferences(HISTORY_KEY,
-        AppCompatActivity.MODE_PRIVATE)
-    val searchHistory = SearchHistory(sharedPreferences)
-        fun bind(model: Track) {
-            trackName.text = model.trackName
-            authorTrack.text = model.artistName
-            timeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
-            Glide
-                .with(trackItem)
-                .load(model.artworkUrl100)
-                .placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(10))
-                .into(iconTrack)
-
-
-            trackItem.setOnClickListener{
-searchHistory.write(model)
-            }
-        }
     }
 }

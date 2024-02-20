@@ -17,5 +17,20 @@
     <string name="nothing">"Ничего не нашлось"</string>
     <string name="noInternet">"Проблемы со связью"</string>
     <string name="noInternet2">"Загрузка не удалась. Проверьте подключение к интернету"</string>
+    <string name="we_search">"Вы искали"</string>
+    <string name="clear_history">"Очистить историю"</string>
+    <string name="track_name">"Название трека"</string>
+    <string name="author_name">"Исполнитель"</string>
+    <string name="playtime">"Время исполнения"</string>
+    <string name="length">"Длительность"</string>
+    <string name="length_en">"length"</string>
+    <string name="collection">"Альбом"</string>
+    <string name="collection_en">"collection"</string>
+    <string name="year">"Год"</string>
+    <string name="year_en">"year"</string>
+    <string name="genre">"Жанр"</string>
+    <string name="genre_en">"genre"</string>
+    <string name="country">"Страна"</string>
+    <string name="country_en">"country"</string>
     <string name="restore">"Обновить"</string>
 </resources>
