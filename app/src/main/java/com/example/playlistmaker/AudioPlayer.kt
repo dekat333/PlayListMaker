@@ -1,8 +1,11 @@
 package com.example.playlistmaker
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -24,6 +27,7 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var genre: TextView
     private lateinit var country: TextView
     private lateinit var iconTrack: ImageView
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audiopleer)
@@ -42,29 +46,37 @@ class AudioPlayer : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-        val trackAsJson = intent.getStringExtra("Key")
-        val tracklist = Gson().fromJson(trackAsJson, Track::class.java)
+        val trackAsJson = intent.getStringExtra(TRACK_KEY)
+
+         Log.d("Search", trackAsJson.toString())
+       val tracklist = Gson().fromJson(trackAsJson, Track::class.java)
 
         info_track(tracklist)
+
+
     }
 
 
-    private fun info_track(track: Track) {
-        trackName.text = track.trackName
-        authorTrack.text = track.artistName
+    private fun info_track(track: Track?) {
+        trackName.text = track?.trackName
+        authorTrack.text = track?.artistName
         currentPlayTime.text = "1:30"
         length.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toLong())
-        albumName.text = track.collectionName
-        releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(track.releaseDate)
-        genre.text = track.primaryGenreName
-        country.text = track.country
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track?.trackTimeMillis?.toLong())
+        albumName.text = track?.collectionName
+        releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(track?.releaseDate)
+        genre.text = track?.primaryGenreName
+        country.text = track?.country
 
         Glide
             .with(iconTrack)
-            .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+            .load(track?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
             .placeholder(R.drawable.track_pl)
             .transform(RoundedCorners(10))
             .into(iconTrack)
+    }
+
+    companion object {
+        const val TRACK_KEY = "TRACK"
     }
 }

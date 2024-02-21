@@ -33,12 +33,30 @@ class SearchActivity : AppCompatActivity() {
     private var input = ""
     private lateinit var searchline: EditText
     private lateinit var trackItem: LinearLayout
+    private lateinit var searchHistory: SearchHistory
+
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val trackApiService = retrofit.create<ITunesAPI>()
+
+    private val trackListener: (Track) -> Unit = { model ->
+        searchHistory.write(model)
+        val intent = Intent(this, AudioPlayer::class.java)
+        val track = Gson().toJson(model)
+        intent.putExtra(AudioPlayer.TRACK_KEY, track)
+        startActivity(intent)
+    }
+
+    private val trackHistoryListener: (Track) -> Unit = { model ->
+        //searchHistory.write(model)
+        val intent = Intent(this, AudioPlayer::class.java)
+        val track = Gson().toJson(model)
+        intent.putExtra(AudioPlayer.TRACK_KEY, track)
+        startActivity(intent)
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +72,8 @@ class SearchActivity : AppCompatActivity() {
 
         }
 
+
+
         val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
 
 
@@ -63,10 +83,15 @@ class SearchActivity : AppCompatActivity() {
         val clearHistory = findViewById<Button>(R.id.clearHistory)
 
 
-        val searchHistory = SearchHistory(sharedPref)
-        val adapter = SearchAdapter(searchHistory.read())
+        searchHistory = SearchHistory(sharedPref)
+        val adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
+
+
+
 
         historyRecyclerView.adapter = adapter
+
+
 
         clearHistory.setOnClickListener {
             searchHistory.clear()
@@ -91,7 +116,7 @@ class SearchActivity : AppCompatActivity() {
                 historyRecyclerView.isVisible = true
                 textHistory.isVisible = true
                 clearHistory.isVisible = true
-                historyRecyclerView.adapter = SearchAdapter(searchHistory.read())
+                historyRecyclerView.adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
             } else historyRecyclerView.isVisible = false
         }
 
@@ -135,12 +160,28 @@ class SearchActivity : AppCompatActivity() {
 
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = SearchAdapter(trackList)
+        recyclerView.adapter = SearchAdapter(trackList, trackListener)
+
+
+
+
+
+        /*SearchAdapter(trackList).onClick = { model ->
+            searchHistory.write(model)
+           // Log.d("Search", "NNNNNNNNNNNNNAAAAAAAAAAAAAAAAAAAAAAAA")
+            val intent = Intent(this, AudioPlayer::class.java)
+            val track = Gson().toJson(model)
+            intent.putExtra(AudioPlayer.TRACK_KEY, track)
+          //  Log.d("Search", "SSSSSSSSSSSSSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            startActivity(intent)
+        }*/
 
         buttonReturn.setOnClickListener {
             searchTrack()
 
         }
+
+
 
     }
 
@@ -158,6 +199,7 @@ class SearchActivity : AppCompatActivity() {
         val clearHistory = findViewById<Button>(R.id.clearHistory)
         trackApiService.search(searchline.text.toString())
             .enqueue(object : Callback<TrackResponse> {
+                //@SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
@@ -180,8 +222,10 @@ class SearchActivity : AppCompatActivity() {
                         if (trackAnswer?.isNotEmpty() == true) {
                             Log.d("Search", recyclerView.isVisible.toString())
                             recyclerView.isVisible = true
+                            Log.d("Search", recyclerView.isVisible.toString())
                             trackList.addAll(trackAnswer!!)
                             recyclerView.adapter?.notifyDataSetChanged()
+                           // Log.d("Search", trackList.toString())
                             clearButton.isVisible = true
                             clearButton.setOnClickListener {
                                 searchline.setText("")
