@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -15,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,19 +46,23 @@ class SearchActivity : AppCompatActivity() {
     val trackApiService = retrofit.create<ITunesAPI>()
 
     private val trackListener: (Track) -> Unit = { model ->
-        searchHistory.write(model)
-        val intent = Intent(this, AudioPlayer::class.java)
-        val track = Gson().toJson(model)
-        intent.putExtra(AudioPlayer.TRACK_KEY, track)
-        startActivity(intent)
+        if (clickDebounce()) {
+            searchHistory.write(model)
+            val intent = Intent(this, AudioPlayer::class.java)
+            val track = Gson().toJson(model)
+            intent.putExtra(AudioPlayer.TRACK_KEY, track)
+            startActivity(intent)
+        }
     }
 
     private val trackHistoryListener: (Track) -> Unit = { model ->
         //searchHistory.write(model)
-        val intent = Intent(this, AudioPlayer::class.java)
-        val track = Gson().toJson(model)
-        intent.putExtra(AudioPlayer.TRACK_KEY, track)
-        startActivity(intent)
+        if (clickDebounce()) {
+            val intent = Intent(this, AudioPlayer::class.java)
+            val track = Gson().toJson(model)
+            intent.putExtra(AudioPlayer.TRACK_KEY, track)
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("MissingInflatedId")
@@ -147,6 +154,8 @@ class SearchActivity : AppCompatActivity() {
                         getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
                 }
+
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -184,6 +193,25 @@ class SearchActivity : AppCompatActivity() {
 
 
     }
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val searchRunnable = Runnable { searchTrack() }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
 
     private fun searchTrack() {
         val buttonReturn = findViewById<Button>(R.id.buttonReturn)
@@ -197,6 +225,20 @@ class SearchActivity : AppCompatActivity() {
         val textHistory = findViewById<TextView>(R.id.TextHistory)
         val historyRecyclerView = findViewById<RecyclerView>(R.id.historyList)
         val clearHistory = findViewById<Button>(R.id.clearHistory)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        if (searchline.text.isNotEmpty()){
+            ImageNoInternet.isVisible = false
+            TextNoInternet.isVisible = false
+            TextNoInternet2.isVisible = false
+            ImageNothing.isVisible = false
+            TextNothing.isVisible = false
+            buttonReturn.isVisible = false
+            textHistory.isVisible = false
+            clearHistory.isVisible = false
+            historyRecyclerView.isVisible = false
+            recyclerView.isVisible = false
+            progressBar.isVisible = true
+        }
         trackApiService.search(searchline.text.toString())
             .enqueue(object : Callback<TrackResponse> {
                 //@SuppressLint("NotifyDataSetChanged")
@@ -204,6 +246,7 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
+                    progressBar.isVisible = false
                     ImageNoInternet.isVisible = false
                     TextNoInternet.isVisible = false
                     TextNoInternet2.isVisible = false
@@ -281,6 +324,7 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                    progressBar.isVisible = false
                     trackList.clear()
                     recyclerView.adapter?.notifyDataSetChanged()
                     ImageNoInternet.isVisible = true
@@ -318,6 +362,8 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val KEY = "Value Edit Text"
         var trackList = ArrayList<Track>()
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
