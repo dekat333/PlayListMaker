@@ -163,7 +163,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="@dimen/dp_210"
+            android:layout_marginTop="102dp"
             android:src="@drawable/nothing_search"
             android:visibility="gone" />
 
@@ -173,7 +173,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="@dimen/dp_210"
+            android:layout_marginTop="52dp"
             android:src="@drawable/no_internet"
             android:visibility="gone" />
 
@@ -182,7 +182,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="@dimen/dp_346"
+            android:layout_marginTop="238dp"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
             android:text="@string/nothing"
@@ -195,7 +195,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="@dimen/dp_346"
+            android:layout_marginTop="188dp"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
             android:text="@string/noInternet"
@@ -209,7 +209,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
             android:layout_marginStart="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_390"
+            android:layout_marginTop="232dp"
             android:layout_marginEnd="@dimen/dp_12"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
@@ -223,7 +223,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="@dimen/dp_450"
+            android:layout_marginTop="300dp"
             android:backgroundTint="?attr/colorOnSecondary"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/restore"

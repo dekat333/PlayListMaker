@@ -80,7 +80,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-
         val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
 
 
@@ -123,7 +122,8 @@ class SearchActivity : AppCompatActivity() {
                 historyRecyclerView.isVisible = true
                 textHistory.isVisible = true
                 clearHistory.isVisible = true
-                historyRecyclerView.adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
+                historyRecyclerView.adapter =
+                    SearchAdapter(searchHistory.read(), trackHistoryListener)
             } else historyRecyclerView.isVisible = false
         }
 
@@ -153,6 +153,9 @@ class SearchActivity : AppCompatActivity() {
                     val inputMethodManager =
                         getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
+                    historyRecyclerView.isVisible = true
+                    textHistory.isVisible = true
+                    clearHistory.isVisible = true
                 }
 
                 searchDebounce()
@@ -172,9 +175,6 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = SearchAdapter(trackList, trackListener)
 
 
-
-
-
         /*SearchAdapter(trackList).onClick = { model ->
             searchHistory.write(model)
            // Log.d("Search", "NNNNNNNNNNNNNAAAAAAAAAAAAAAAAAAAAAAAA")
@@ -191,8 +191,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-
     }
+
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
@@ -202,9 +202,10 @@ class SearchActivity : AppCompatActivity() {
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -226,7 +227,7 @@ class SearchActivity : AppCompatActivity() {
         val historyRecyclerView = findViewById<RecyclerView>(R.id.historyList)
         val clearHistory = findViewById<Button>(R.id.clearHistory)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        if (searchline.text.isNotEmpty()){
+        if (searchline.text.isNotEmpty()) {
             ImageNoInternet.isVisible = false
             TextNoInternet.isVisible = false
             TextNoInternet2.isVisible = false
@@ -238,69 +239,106 @@ class SearchActivity : AppCompatActivity() {
             historyRecyclerView.isVisible = false
             recyclerView.isVisible = false
             progressBar.isVisible = true
-        }
-        trackApiService.search(searchline.text.toString())
-            .enqueue(object : Callback<TrackResponse> {
-                //@SuppressLint("NotifyDataSetChanged")
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    progressBar.isVisible = false
-                    ImageNoInternet.isVisible = false
-                    TextNoInternet.isVisible = false
-                    TextNoInternet2.isVisible = false
-                    ImageNothing.isVisible = false
-                    TextNothing.isVisible = false
-                    buttonReturn.isVisible = false
-                    textHistory.isVisible = false
-                    clearHistory.isVisible = false
-                    historyRecyclerView.isVisible = false
-                    recyclerView.isVisible = false
-                    if (response.isSuccessful) {
-                        Log.d("Search", response.body()?.results.toString())
-                        trackList.clear()
-                        val trackAnswer = response.body()?.results
 
-                        if (trackAnswer?.isNotEmpty() == true) {
-                            Log.d("Search", recyclerView.isVisible.toString())
-                            recyclerView.isVisible = true
-                            Log.d("Search", recyclerView.isVisible.toString())
-                            trackList.addAll(trackAnswer!!)
-                            recyclerView.adapter?.notifyDataSetChanged()
-                           // Log.d("Search", trackList.toString())
-                            clearButton.isVisible = true
-                            clearButton.setOnClickListener {
-                                searchline.setText("")
+            trackApiService.search(searchline.text.toString())
+                .enqueue(object : Callback<TrackResponse> {
+                    //@SuppressLint("NotifyDataSetChanged")
+                    override fun onResponse(
+                        call: Call<TrackResponse>,
+                        response: Response<TrackResponse>
+                    ) {
+                        progressBar.isVisible = false
+                        ImageNoInternet.isVisible = false
+                        TextNoInternet.isVisible = false
+                        TextNoInternet2.isVisible = false
+                        ImageNothing.isVisible = false
+                        TextNothing.isVisible = false
+                        buttonReturn.isVisible = false
+                        textHistory.isVisible = false
+                        clearHistory.isVisible = false
+                        historyRecyclerView.isVisible = false
+                        recyclerView.isVisible = false
+                        if (response.isSuccessful) {
+                            Log.d("Search", response.body()?.results.toString())
+                            trackList.clear()
+                            val trackAnswer = response.body()?.results
+
+                            if (trackAnswer?.isNotEmpty() == true) {
+                                Log.d("Search", recyclerView.isVisible.toString())
+                                recyclerView.isVisible = true
+                                Log.d("Search", recyclerView.isVisible.toString())
+                                trackList.addAll(trackAnswer!!)
+                                recyclerView.adapter?.notifyDataSetChanged()
+                                // Log.d("Search", trackList.toString())
+                                clearButton.isVisible = true
+                                clearButton.setOnClickListener {
+                                    searchline.setText("")
+                                    trackList.clear()
+                                    recyclerView.adapter?.notifyDataSetChanged()
+                                    val inputMethodManager =
+                                        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                                    inputMethodManager?.hideSoftInputFromWindow(
+                                        searchline.windowToken,
+                                        0
+                                    )
+                                    historyRecyclerView.isVisible = true
+                                    textHistory.isVisible = true
+                                    clearHistory.isVisible = true
+                                }
+                            } else {
                                 trackList.clear()
                                 recyclerView.adapter?.notifyDataSetChanged()
-                                val inputMethodManager =
-                                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                                inputMethodManager?.hideSoftInputFromWindow(
-                                    searchline.windowToken,
-                                    0
-                                )
+                                ImageNothing.isVisible = true
+                                TextNothing.isVisible = true
+
+                                clearButton.setOnClickListener {
+                                    searchline.setText("")
+                                    ImageNothing.isVisible = false
+                                    TextNothing.isVisible = false
+
+                                    val inputMethodManager =
+                                        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                                    inputMethodManager?.hideSoftInputFromWindow(
+                                        searchline.windowToken,
+                                        0
+                                    )
+                                    historyRecyclerView.isVisible = true
+                                    textHistory.isVisible = true
+                                    clearHistory.isVisible = true
+                                }
                             }
                         } else {
                             trackList.clear()
                             recyclerView.adapter?.notifyDataSetChanged()
-                            ImageNothing.isVisible = true
-                            TextNothing.isVisible = true
+                            ImageNoInternet.isVisible = true
+                            TextNoInternet.isVisible = true
+                            TextNoInternet2.isVisible = true
+                            buttonReturn.isVisible = true
+                            ImageNothing.isVisible = false
+                            TextNothing.isVisible = false
 
                             clearButton.setOnClickListener {
                                 searchline.setText("")
-                                ImageNothing.isVisible = false
-                                TextNothing.isVisible = false
-
+                                ImageNoInternet.isVisible = false
+                                TextNoInternet.isVisible = false
+                                TextNoInternet2.isVisible = false
+                                buttonReturn.isVisible = false
                                 val inputMethodManager =
                                     getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                                 inputMethodManager?.hideSoftInputFromWindow(
                                     searchline.windowToken,
                                     0
                                 )
+                                historyRecyclerView.isVisible = true
+                                textHistory.isVisible = true
+                                clearHistory.isVisible = true
                             }
                         }
-                    } else {
+                    }
+
+
+                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                        progressBar.isVisible = false
                         trackList.clear()
                         recyclerView.adapter?.notifyDataSetChanged()
                         ImageNoInternet.isVisible = true
@@ -309,7 +347,9 @@ class SearchActivity : AppCompatActivity() {
                         buttonReturn.isVisible = true
                         ImageNothing.isVisible = false
                         TextNothing.isVisible = false
-
+                        textHistory.isVisible = false
+                        clearHistory.isVisible = false
+                        historyRecyclerView.isVisible = false
                         clearButton.setOnClickListener {
                             searchline.setText("")
                             ImageNoInternet.isVisible = false
@@ -319,37 +359,15 @@ class SearchActivity : AppCompatActivity() {
                             val inputMethodManager =
                                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                             inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
+                            historyRecyclerView.isVisible = true
+                            textHistory.isVisible = true
+                            clearHistory.isVisible = true
                         }
                     }
-                }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    progressBar.isVisible = false
-                    trackList.clear()
-                    recyclerView.adapter?.notifyDataSetChanged()
-                    ImageNoInternet.isVisible = true
-                    TextNoInternet.isVisible = true
-                    TextNoInternet2.isVisible = true
-                    buttonReturn.isVisible = true
-                    ImageNothing.isVisible = false
-                    TextNothing.isVisible = false
-                    textHistory.isVisible = false
-                    clearHistory.isVisible = false
-                    historyRecyclerView.isVisible = false
-                    clearButton.setOnClickListener {
-                        searchline.setText("")
-                        ImageNoInternet.isVisible = false
-                        TextNoInternet.isVisible = false
-                        TextNoInternet2.isVisible = false
-                        buttonReturn.isVisible = false
-                        val inputMethodManager =
-                            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                        inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
-                    }
-                }
 
 
-            })
+                })
+        }
     }
 
 
