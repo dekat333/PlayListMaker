@@ -80,10 +80,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+
 
 
         val textHistory = findViewById<TextView>(R.id.TextHistory)
+
+        val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
 
         val historyRecyclerView = findViewById<RecyclerView>(R.id.historyList)
         val clearHistory = findViewById<Button>(R.id.clearHistory)
@@ -91,10 +93,6 @@ class SearchActivity : AppCompatActivity() {
 
         searchHistory = SearchHistory(sharedPref)
         val adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
-
-
-
-
         historyRecyclerView.adapter = adapter
 
 
@@ -124,7 +122,10 @@ class SearchActivity : AppCompatActivity() {
                 clearHistory.isVisible = true
                 historyRecyclerView.adapter =
                     SearchAdapter(searchHistory.read(), trackHistoryListener)
-            } else historyRecyclerView.isVisible = false
+            } else
+            {historyRecyclerView.isVisible = false
+                textHistory.isVisible = false
+                clearHistory.isVisible = false}
         }
 
         searchline.setOnEditorActionListener { _, actionId, _ ->
@@ -153,6 +154,7 @@ class SearchActivity : AppCompatActivity() {
                     val inputMethodManager =
                         getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
+                    adapter.notifyDataSetChanged()
                     historyRecyclerView.isVisible = true
                     textHistory.isVisible = true
                     clearHistory.isVisible = true
@@ -193,6 +195,8 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+
+
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
@@ -215,6 +219,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTrack() {
+        val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         val buttonReturn = findViewById<Button>(R.id.buttonReturn)
         val recyclerView = findViewById<RecyclerView>(R.id.searchList)
         val clearButton = findViewById<ImageButton>(R.id.clear_button)
@@ -281,9 +286,22 @@ class SearchActivity : AppCompatActivity() {
                                         searchline.windowToken,
                                         0
                                     )
-                                    historyRecyclerView.isVisible = true
-                                    textHistory.isVisible = true
-                                    clearHistory.isVisible = true
+                                    if (searchline.text.isEmpty() && sharedPref.getString(
+                                            HISTORY_KEY,
+                                            null
+                                        ) != null
+                                    ) {
+
+
+                                        historyRecyclerView.isVisible = true
+                                        textHistory.isVisible = true
+                                        clearHistory.isVisible = true
+                                        historyRecyclerView.adapter =
+                                            SearchAdapter(searchHistory.read(), trackHistoryListener)
+                                    } else
+                                    {historyRecyclerView.isVisible = false
+                                        textHistory.isVisible = false
+                                        clearHistory.isVisible = false}
                                 }
                             } else {
                                 trackList.clear()
@@ -302,9 +320,22 @@ class SearchActivity : AppCompatActivity() {
                                         searchline.windowToken,
                                         0
                                     )
-                                    historyRecyclerView.isVisible = true
-                                    textHistory.isVisible = true
-                                    clearHistory.isVisible = true
+                                    if (searchline.text.isEmpty() && sharedPref.getString(
+                                            HISTORY_KEY,
+                                            null
+                                        ) != null
+                                    ) {
+
+
+                                        historyRecyclerView.isVisible = true
+                                        textHistory.isVisible = true
+                                        clearHistory.isVisible = true
+                                        historyRecyclerView.adapter =
+                                            SearchAdapter(searchHistory.read(), trackHistoryListener)
+                                    } else
+                                    {historyRecyclerView.isVisible = false
+                                        textHistory.isVisible = false
+                                        clearHistory.isVisible = false}
                                 }
                             }
                         } else {
@@ -329,9 +360,22 @@ class SearchActivity : AppCompatActivity() {
                                     searchline.windowToken,
                                     0
                                 )
-                                historyRecyclerView.isVisible = true
-                                textHistory.isVisible = true
-                                clearHistory.isVisible = true
+                                if (searchline.text.isEmpty() && sharedPref.getString(
+                                        HISTORY_KEY,
+                                        null
+                                    ) != null
+                                ) {
+
+
+                                    historyRecyclerView.isVisible = true
+                                    textHistory.isVisible = true
+                                    clearHistory.isVisible = true
+                                    historyRecyclerView.adapter =
+                                        SearchAdapter(searchHistory.read(), trackHistoryListener)
+                                } else
+                                {historyRecyclerView.isVisible = false
+                                    textHistory.isVisible = false
+                                    clearHistory.isVisible = false}
                             }
                         }
                     }
@@ -359,9 +403,22 @@ class SearchActivity : AppCompatActivity() {
                             val inputMethodManager =
                                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                             inputMethodManager?.hideSoftInputFromWindow(searchline.windowToken, 0)
-                            historyRecyclerView.isVisible = true
-                            textHistory.isVisible = true
-                            clearHistory.isVisible = true
+                            if (searchline.text.isEmpty() && sharedPref.getString(
+                                    HISTORY_KEY,
+                                    null
+                                ) != null
+                            ) {
+
+
+                                historyRecyclerView.isVisible = true
+                                textHistory.isVisible = true
+                                clearHistory.isVisible = true
+                                historyRecyclerView.adapter =
+                                    SearchAdapter(searchHistory.read(), trackHistoryListener)
+                            } else
+                            {historyRecyclerView.isVisible = false
+                                textHistory.isVisible = false
+                                clearHistory.isVisible = false}
                         }
                     }
 

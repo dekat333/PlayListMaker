@@ -27,10 +27,11 @@ class SettingsActivity : AppCompatActivity() {
         val buttonShare = findViewById<FrameLayout>(R.id.share)
 
         buttonShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SENDTO)
-            shareIntent.data = Uri.parse("mailto:")
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.mail)))
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.web_practicum))
+            val sendIntent = Intent(Intent.ACTION_SEND)
+            //data = Uri.parse("mailto:")
+           // shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.mail)))
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.web_practicum))
+            val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
         }
 
