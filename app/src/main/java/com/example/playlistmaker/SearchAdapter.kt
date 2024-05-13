@@ -10,9 +10,6 @@ import com.google.gson.Gson
 
 class SearchAdapter(private val track: List<Track>,
                     private val onClick: (clickedTrack : Track) -> Unit) : RecyclerView.Adapter<SearchViewHolder>() {
-    // val track: List<Track> = arrayListOf()
-
-    //private val searchHistory: SearchHistory? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_item, parent, false)
@@ -26,25 +23,11 @@ class SearchAdapter(private val track: List<Track>,
 
         holder.itemView.setOnClickListener {
             val track = track[position]
-           // Log.d("Search", track.toString())
-           // searchHistory.write(track)
            onClick(track)
-           // Log.d("Search", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-            /*val intent = Intent(holder.itemView.context, AudioPlayer::class.java)
-            intent.putExtra("Key", Gson().toJson(track))
-            holder.itemView.context.startActivity(intent)*/
         }
-
-
-
-
     }
 
     override fun getItemCount(): Int {
         return track.size
     }
-
-     //var onClick: (track: Track) -> Unit ={}
-
-
 }

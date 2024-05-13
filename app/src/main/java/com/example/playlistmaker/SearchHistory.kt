@@ -26,9 +26,9 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     fun write(track: Track) {
 
-        var trackListHistory = read()
+        val trackListHistory = read()
 
-            var trackDouble = trackListHistory.find { it.trackId == track.trackId }
+            val trackDouble = trackListHistory.find { it.trackId == track.trackId }
             trackListHistory.remove(trackDouble)
 
             if (trackListHistory.size < 10) {
@@ -37,7 +37,6 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
                 trackListHistory.removeAt(9)
                 trackListHistory.add(0, track)
             }
-        Log.d("Search", trackListHistory.toString())
 
         val json = Gson().toJson(trackListHistory)
         sharedPreferences.edit()
@@ -52,6 +51,5 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     companion object {
         const val HISTORY_KEY = "history_key"
-        const val ADD_KEY = "add_key"
     }
 }
