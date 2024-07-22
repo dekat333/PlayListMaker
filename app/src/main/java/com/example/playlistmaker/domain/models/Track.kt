@@ -1,8 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.models
 
 import java.util.Date
 
-data class Track (
+data class Track(
     val trackId: Int,
     val number: Int, //Номер трека
     val trackName: String, // Название композиции

@@ -1,11 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.view.isVisible
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.Serializable
 import java.lang.reflect.Type
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
@@ -24,20 +22,19 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         return jsonList
     }
 
-    fun write(track: Track) {
+    fun write(trackEntity: Track) {
 
         var trackListHistory = read()
 
-            var trackDouble = trackListHistory.find { it.trackId == track.trackId }
+            var trackDouble = trackListHistory.find { it.trackId == trackEntity.trackId }
             trackListHistory.remove(trackDouble)
 
             if (trackListHistory.size < 10) {
-                trackListHistory.add(0, track)
+                trackListHistory.add(0, trackEntity)
             }else{
                 trackListHistory.removeAt(9)
-                trackListHistory.add(0, track)
+                trackListHistory.add(0, trackEntity)
             }
-        Log.d("Search", trackListHistory.toString())
 
         val json = Gson().toJson(trackListHistory)
         sharedPreferences.edit()

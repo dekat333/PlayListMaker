@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.audio_player
 
 import android.annotation.SuppressLint
 import android.media.MediaPlayer
@@ -6,18 +6,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
-import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -43,9 +40,10 @@ class AudioPlayer : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
 
-    private fun preparePlayer(track: Track?) {
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun preparePlayer(trackEntity: Track?) {
         currentPlayTime = findViewById(R.id.player_current_playtime)
-        var url = track?.previewUrl
+        var url = trackEntity?.previewUrl
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -133,7 +131,6 @@ class AudioPlayer : AppCompatActivity() {
         }
         val trackAsJson = intent.getStringExtra(TRACK_KEY)
 
-        Log.d("Search", trackAsJson.toString())
         val tracklist = Gson().fromJson(trackAsJson, Track::class.java)
 
         info_track(tracklist)
@@ -153,26 +150,26 @@ class AudioPlayer : AppCompatActivity() {
             currentPlayTime.text =
                 SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
             handler.postDelayed(this, CURRENT_DEBOUNCE_DELAY)
-            Log.d("Audio", mediaPlayer.currentPosition.toString())
+
         }
 
     }
 
 
-    private fun info_track(track: Track?) {
-        trackName.text = track?.trackName
-        authorTrack.text = track?.artistName
+    private fun info_track(trackEntity: Track?) {
+        trackName.text = trackEntity?.trackName
+        authorTrack.text = trackEntity?.artistName
         currentPlayTime.text = ""
         length.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track?.trackTimeMillis?.toLong())
-        albumName.text = track?.collectionName
-        releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(track?.releaseDate)
-        genre.text = track?.primaryGenreName
-        country.text = track?.country
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackEntity?.trackTimeMillis?.toLong())
+        albumName.text = trackEntity?.collectionName
+        releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(trackEntity?.releaseDate)
+        genre.text = trackEntity?.primaryGenreName
+        country.text = trackEntity?.country
 
         Glide
             .with(iconTrack)
-            .load(track?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
+            .load(trackEntity?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
             .placeholder(R.drawable.track_pl)
             .transform(RoundedCorners(10))
             .into(iconTrack)
