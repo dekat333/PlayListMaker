@@ -1,20 +1,14 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
-import android.content.Intent
-import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.SearchHistory.Companion.HISTORY_KEY
-import com.google.gson.Gson
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

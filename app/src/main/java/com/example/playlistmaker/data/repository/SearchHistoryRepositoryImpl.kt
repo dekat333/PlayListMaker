@@ -1,19 +1,15 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.repository
 
 import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.view.isVisible
+import com.example.playlistmaker.domain.api.SearchHistoryRepository
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.Serializable
 import java.lang.reflect.Type
 
-class SearchHistory(private val sharedPreferences: SharedPreferences) {
-
-
-
-
-    fun read(): ArrayList<Track> {
+class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences):
+    SearchHistoryRepository {
+    override fun read(): ArrayList<Track> {
         val json = sharedPreferences.getString(HISTORY_KEY, null)
         var jsonList = if (json != null) {
             val type: Type = object : TypeToken<ArrayList<Track>>() {}.type
@@ -24,20 +20,19 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         return jsonList
     }
 
-    fun write(track: Track) {
+    override fun write(trackEntity: Track) {
 
         var trackListHistory = read()
 
-            var trackDouble = trackListHistory.find { it.trackId == track.trackId }
-            trackListHistory.remove(trackDouble)
+        var trackDouble = trackListHistory.find { it.trackId == trackEntity.trackId }
+        trackListHistory.remove(trackDouble)
 
-            if (trackListHistory.size < 10) {
-                trackListHistory.add(0, track)
-            }else{
-                trackListHistory.removeAt(9)
-                trackListHistory.add(0, track)
-            }
-        Log.d("Search", trackListHistory.toString())
+        if (trackListHistory.size < 10) {
+            trackListHistory.add(0, trackEntity)
+        }else{
+            trackListHistory.removeAt(9)
+            trackListHistory.add(0, trackEntity)
+        }
 
         val json = Gson().toJson(trackListHistory)
         sharedPreferences.edit()
@@ -45,13 +40,10 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
             .apply()
     }
 
-
-    fun clear(){
+    override fun clear() {
         sharedPreferences.edit().remove(HISTORY_KEY).apply()
     }
-
     companion object {
         const val HISTORY_KEY = "history_key"
-        const val ADD_KEY = "add_key"
     }
 }

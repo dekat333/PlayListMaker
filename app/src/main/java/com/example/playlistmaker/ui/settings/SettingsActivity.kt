@@ -1,14 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.settings
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.TextView
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -28,8 +27,6 @@ class SettingsActivity : AppCompatActivity() {
 
         buttonShare.setOnClickListener {
             val sendIntent = Intent(Intent.ACTION_SEND)
-            //data = Uri.parse("mailto:")
-           // shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.mail)))
             sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.web_practicum))
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
