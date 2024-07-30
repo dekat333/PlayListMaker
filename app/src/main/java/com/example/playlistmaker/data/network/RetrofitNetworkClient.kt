@@ -22,7 +22,11 @@ class RetrofitNetworkClient: NetworkClient {
 
             val body = resp.body() ?: Response()
 
-            return body.apply { resultCode = resp.code() }
+            return if (body != null) {
+                body.apply { resultCode = resp.code() }
+            } else {
+                Response().apply { resultCode = 204 }
+            }
         } else {
             return Response().apply { resultCode = 400 }
         }

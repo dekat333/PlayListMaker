@@ -1,18 +1,22 @@
 package com.example.playlistmaker.ui.audio_player
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.AudioPlayerInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -31,19 +35,17 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var country: TextView
     private lateinit var iconTrack: ImageView
     private lateinit var playerPlayButton: ImageView
+    private lateinit var audioPlayerInteractor: AudioPlayerInteractor
 
     private var mediaPlayer = MediaPlayer()
-
     private var playerState = STATE_DEFAULT
-
-
     private val handler = Handler(Looper.getMainLooper())
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun preparePlayer(trackEntity: Track?) {
         currentPlayTime = findViewById(R.id.player_current_playtime)
-        var url = trackEntity?.previewUrl
+        val url = trackEntity?.previewUrl
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -61,18 +63,17 @@ class AudioPlayer : AppCompatActivity() {
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun startPlayer() {
 
-        mediaPlayer.start()
+        audioPlayerInteractor.startPlayer()
         playerPlayButton.setImageDrawable(getDrawable(R.drawable.button_play))
-        playerState = STATE_PLAYING
         handler.postDelayed(handlerCurrentTime, CURRENT_DEBOUNCE_DELAY)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun pausePlayer() {
+        audioPlayerInteractor.pausePlayer()
         handler.removeCallbacks(handlerCurrentTime)
-        mediaPlayer.pause()
         playerPlayButton.setImageDrawable(getDrawable(R.drawable.play))
-        playerState = STATE_PAUSED
+
 
     }
 
@@ -101,7 +102,7 @@ class AudioPlayer : AppCompatActivity() {
     override fun onDestroy() {
         handler.removeCallbacks(handlerCurrentTime)
         super.onDestroy()
-        mediaPlayer.release()
+        audioPlayerInteractor.onDestroy()
     }
 
 
@@ -109,6 +110,7 @@ class AudioPlayer : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audiopleer)
+        audioPlayerInteractor = Creator.provideAudioPlayerInteractor()
 
         val buttonBack = findViewById<ImageView>(R.id.player_back_button)
 
@@ -129,11 +131,11 @@ class AudioPlayer : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-        val trackAsJson = intent.getStringExtra(TRACK_KEY)
+        val trackAsJson = intent.getStringExtra(TRACK_KEY)?: ""
 
         val tracklist = Gson().fromJson(trackAsJson, Track::class.java)
-
-        info_track(tracklist)
+        info_track(trackAsJson)
+        trackDetails(tracklist)
         preparePlayer(tracklist)
 
 
@@ -148,7 +150,7 @@ class AudioPlayer : AppCompatActivity() {
     private val handlerCurrentTime = object : Runnable {
         override fun run() {
             currentPlayTime.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                audioPlayerInteractor.getCurrentPosition().toString()
             handler.postDelayed(this, CURRENT_DEBOUNCE_DELAY)
 
         }
@@ -156,24 +158,44 @@ class AudioPlayer : AppCompatActivity() {
     }
 
 
-    private fun info_track(trackEntity: Track?) {
-        trackName.text = trackEntity?.trackName
-        authorTrack.text = trackEntity?.artistName
-        currentPlayTime.text = ""
-        length.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackEntity?.trackTimeMillis?.toLong())
-        albumName.text = trackEntity?.collectionName
-        releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(trackEntity?.releaseDate)
-        genre.text = trackEntity?.primaryGenreName
-        country.text = trackEntity?.country
+    private fun info_track(trackEntity: String) {
 
-        Glide
-            .with(iconTrack)
-            .load(trackEntity?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
-            .placeholder(R.drawable.track_pl)
-            .transform(RoundedCorners(10))
-            .into(iconTrack)
+        audioPlayerInteractor.info_track(trackEntity, object : AudioPlayerInteractor.TrackConsumer{
+            override fun consume(track: Track) {
+                runOnUiThread {
+                    trackDetails(track)
+                    preparePlayer(track)
+                }
+            }
+
+            override fun error(t: Throwable) {
+                runOnUiThread {
+                    Log.e(TAG, "Ошибка: ${t.message}", t)
+                }
+            }
+
+
+        })
     }
+
+    private fun trackDetails(trackEntity: Track){
+            trackName.text = trackEntity.trackName
+            authorTrack.text = trackEntity.artistName
+            currentPlayTime.text = ""
+            length.text =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackEntity.trackTimeMillis.toLong())
+            albumName.text = trackEntity.collectionName
+            releaseYear.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(trackEntity.releaseDate)
+            genre.text = trackEntity.primaryGenreName
+            country.text = trackEntity.country
+
+            Glide
+                .with(iconTrack)
+                .load(trackEntity.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+                .placeholder(R.drawable.track_pl)
+                .transform(RoundedCorners(10))
+                .into(iconTrack)
+        }
 
     companion object {
         const val TRACK_KEY = "TRACK"

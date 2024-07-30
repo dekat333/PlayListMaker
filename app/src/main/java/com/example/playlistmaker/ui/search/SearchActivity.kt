@@ -1,6 +1,7 @@
 package com.example.playlistmaker.ui.search
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -21,18 +22,18 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.ui.audio_player.AudioPlayer
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.search.SearchHistory.Companion.HISTORY_KEY
-import com.example.playlistmaker.data.dto.TrackResponse
 import com.example.playlistmaker.data.network.ITunesAPI
+import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl.Companion.HISTORY_KEY
+import com.example.playlistmaker.domain.api.EntityTrackRepository
+import com.example.playlistmaker.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.converter.gson.GsonConverterFactory
@@ -41,7 +42,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
     private var input = ""
     private lateinit var searchline: EditText
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistory: SearchHistoryRepository
     private lateinit var clearButton: ImageButton
     private lateinit var buttonBack: ImageButton
     private lateinit var recyclerView: RecyclerView
@@ -56,16 +57,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var TextNoInternet2: TextView
     private lateinit var progressBar:ProgressBar
     private lateinit var tracksInteractor: TracksInteractor
+    private lateinit var entityTrackRepository: EntityTrackRepository
+    private lateinit var searchHistoryRepository: SearchHistoryRepository
+    private val tracks = mutableListOf<Track>()
 
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val trackApiService = retrofit.create<ITunesAPI>()
 
     private val trackListener: (Track) -> Unit = { model ->
-        searchHistory.write(model)
+        searchHistoryRepository.write(model)
         listeners(model)
     }
 
@@ -76,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
     private fun listeners(model: Track) {
         if (clickDebounce()) {
             val intent = Intent(this, AudioPlayer::class.java)
-            val track = Gson().toJson(model)
+            val track = entityTrackRepository.encodeTrackDetails(model)
             intent.putExtra(AudioPlayer.TRACK_KEY, track)
             startActivity(intent)
         }
@@ -143,6 +141,11 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        tracksInteractor = Creator.provideTracksInteractor()
+        entityTrackRepository = Creator.getEntityTrackRepository()
+
+        searchHistoryRepository = SearchHistoryRepositoryImpl((application as App).sharedPrefs)
+
         searchline = findViewById(R.id.search_line)
         clearButton = findViewById(R.id.clear_button)
         buttonBack = findViewById(R.id.icon1)
@@ -152,7 +155,6 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = findViewById(R.id.clearHistory)
         buttonReturn = findViewById(R.id.buttonReturn)
 
-        tracksInteractor = Creator.provideTracksInteractor()
 
         recyclerView.isVisible = false
         buttonBack.setOnClickListener {
@@ -163,15 +165,13 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
 
-
-        searchHistory = SearchHistory(sharedPref)
-        val adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
+        val adapter = SearchAdapter(searchHistoryRepository.read(), trackHistoryListener)
         historyRecyclerView.adapter = adapter
 
 
 
         clearHistory.setOnClickListener {
-            searchHistory.clear()
+            searchHistoryRepository.clear()
             adapter.notifyDataSetChanged()
             historyFalse()
             searchline.clearFocus()
@@ -182,7 +182,7 @@ class SearchActivity : AppCompatActivity() {
         searchline.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && searchline.text.isEmpty() && sharedPref.getString(HISTORY_KEY, null) != null) {
                 historyTrue()
-                historyRecyclerView.adapter = SearchAdapter(searchHistory.read(), trackHistoryListener)
+                historyRecyclerView.adapter = SearchAdapter(searchHistoryRepository.read(), trackHistoryListener)
             } else historyRecyclerView.isVisible = false
         }
 
@@ -240,7 +240,8 @@ class SearchActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val searchRunnable = Runnable { searchTrack() }
+    private val searchRunnable = Runnable { searchTrack()
+        }
 
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
@@ -258,7 +259,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTrack() {
-        val sharedPref = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+        Log.d("Search", "QQQQQQQQQQQ")
         buttonReturn = findViewById(R.id.buttonReturn)
         recyclerView = findViewById(R.id.searchList)
         clearButton = findViewById(R.id.clear_button)
@@ -272,83 +273,67 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = findViewById(R.id.clearHistory)
         progressBar = findViewById(R.id.progressBar)
 
-        if (searchline.text.isNotEmpty()) {
-            noInternetFalse()
-            nothingFalse()
-            historyFalse()
-            buttonReturn.isVisible = false
-            recyclerView.isVisible = false
-            progressBar.isVisible = true
+        progressBar.isVisible = true
+        recyclerView.isVisible = false
+        noInternetFalse()
+        nothingFalse()
+        historyFalse()
 
+        tracksInteractor.searchTracks(
 
-
-
-            trackApiService.search(searchline.text.toString())
-                .enqueue(object : Callback<TrackResponse> {
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onResponse(
-                        call: Call<TrackResponse>,
-                        response: Response<TrackResponse>
-                    ) {
+            searchline.text.toString(),
+            object : TracksInteractor.TracksConsumer {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun consume(foundTracks: List<Track>) {
+                    Log.d("Search", "rrrrrrrrrrr")
+                    runOnUiThread {
+                        Log.d("Search", foundTracks.toString())
                         progressBar.isVisible = false
-                        noInternetFalse()
-                        nothingFalse()
-                        historyFalse()
-                        buttonReturn.isVisible = false
                         recyclerView.isVisible = false
-                        if (response.isSuccessful) {
-                            //Log.d("Search", response.body()?.results.toString())
-                            trackEntityList.clear()
-                            val trackAnswer = response.body()?.results
-
-                            if (trackAnswer?.isNotEmpty() == true) {
-                                recyclerView.isVisible = true
-                                trackEntityList.addAll(trackAnswer)
+                        if (foundTracks.isNotEmpty()) {
+                            Log.d("Search", "SSSSSSSSSSS")
+                            progressBar.isVisible = false
+                            noInternetFalse()
+                            nothingFalse()
+                            historyFalse()
+                            buttonReturn.isVisible = false
+                            recyclerView.isVisible = true
+                            tracks.clear()
+                            tracks.addAll(foundTracks)
+                            recyclerView.adapter?.notifyDataSetChanged()
+                            clearButton.isVisible = true
+                            clearButton.setOnClickListener {
+                                clearSearchLine()
+                                tracks.clear()
                                 recyclerView.adapter?.notifyDataSetChanged()
-                                clearButton.isVisible = true
-                                clearButton.setOnClickListener {
-                                    clearSearchLine()
-                                    trackEntityList.clear()
-                                    recyclerView.adapter?.notifyDataSetChanged()
-                                    searchLineText()
-                                }
-                            } else {
-                                trackEntityList.clear()
-                                recyclerView.adapter?.notifyDataSetChanged()
-                                nothingTrue()
-
-                                clearButton.setOnClickListener {
-                                    clearSearchLine()
-                                    nothingFalse()
-                                    searchLineText()
-                                }
+                                searchLineText()
                             }
                         } else {
-                            trackEntityList.clear()
+                            Log.d("Search", "dddddddddd")
+                            tracks.clear()
                             recyclerView.adapter?.notifyDataSetChanged()
-                            buttonReturn.isVisible = true
-                            noInternetTrue()
-                            nothingFalse()
+                            nothingTrue()
 
                             clearButton.setOnClickListener {
                                 clearSearchLine()
-                                buttonReturn.isVisible = false
-                                noInternetFalse()
+                                nothingFalse()
                                 searchLineText()
                             }
                         }
                     }
+               }
 
-
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun error(t: Throwable) {
+                    runOnUiThread {
                         progressBar.isVisible = false
-                        trackEntityList.clear()
+                        tracks.clear()
                         recyclerView.adapter?.notifyDataSetChanged()
                         buttonReturn.isVisible = true
                         noInternetTrue()
                         nothingFalse()
                         historyFalse()
+                        Log.d("Search", "Gjcgcgcg")
                         clearButton.setOnClickListener {
                             clearSearchLine()
                             buttonReturn.isVisible = false
@@ -356,18 +341,22 @@ class SearchActivity : AppCompatActivity() {
                             searchLineText()
                         }
                     }
+                }
+
+            })
+        Log.d("Search", tracks.toString())
 
 
-                })
-        }
+
     }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(KEY, input)
 
     }
+
+
 
     companion object {
         const val KEY = "Value Edit Text"

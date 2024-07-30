@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.models
 
-import java.util.Date
+import java.io.Serializable
 
 data class Track(
     val trackId: Int,
@@ -10,8 +10,8 @@ data class Track(
     val trackTimeMillis: String, // Продолжительность трека
     val artworkUrl100: String, // Ссылка на изображение обложки
     val collectionName: String,
-    val releaseDate: Date,
+    val releaseDate: Serializable,
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-)
+):Serializable
